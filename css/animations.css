@@ -1,0 +1,190 @@
+/* ============================================================
+   The Unplug Collective — animations.css
+   Portfolio-style animations + campaign-specific keyframes
+   ============================================================ */
+
+/* ── Portfolio: Star / Sparkle Animations ─────────────────── */
+@keyframes twinkle {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.3; transform: scale(0.6); }
+}
+
+@keyframes sparkleFade {
+  0%   { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0);   opacity: 0; }
+}
+
+@keyframes sparkleTrail {
+  0%   { transform: translate(-50%, -50%) scale(1) rotate(0deg);   opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0) rotate(180deg); opacity: 0; }
+}
+
+/* ── Portfolio: Hero Entry Animations ─────────────────────── */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Portfolio: General Purpose Animations ────────────────── */
+@keyframes floating {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4); }
+  50%       { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+}
+
+/* ── Portfolio: Utility Classes ───────────────────────────── */
+.card-hover-effect {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.pulse-effect {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.section-entry {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.section-entry.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.title-animation {
+  animation: fadeInDown 0.8s ease both;
+}
+
+.subtitle-animation {
+  animation: fadeInUp 0.8s 0.3s ease both;
+}
+
+/* ── Campaign: fade-in triggered by IntersectionObserver ──── */
+.fade-in {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-play-state: paused;
+}
+.fade-in.visible {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+.delay-1 { animation-delay: 0.15s; }
+.delay-2 { animation-delay: 0.30s; }
+.delay-3 { animation-delay: 0.45s; }
+.delay-4 { animation-delay: 0.60s; }
+.delay-5 { animation-delay: 0.75s; }
+
+/* ── Campaign: Hero slide-in ──────────────────────────────── */
+@keyframes heroSlideIn {
+  from { opacity: 0; transform: translateY(50px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Campaign: App-bar flicker ────────────────────────────── */
+@keyframes barFlicker {
+  0%, 100% { opacity: 1; }
+  45%       { opacity: 0.6; }
+  55%       { opacity: 0.9; }
+}
+
+/* ── Campaign: Chaotic background color cycling ───────────── */
+@keyframes chaoticBg {
+  0%   { background: #1a0000; }
+  12%  { background: #00001a; }
+  24%  { background: #1a0010; }
+  36%  { background: #0a001a; }
+  50%  { background: #1a0505; }
+  62%  { background: #00101a; }
+  74%  { background: #150015; }
+  88%  { background: #1a0a00; }
+  100% { background: #1a0000; }
+}
+
+/* ── Campaign: Chaotic text flicker ──────────────────────── */
+@keyframes textFlicker {
+  0%   { opacity: 1;   transform: translate(0px, 0px)   scale(1.0);  color: #ff4444; }
+  10%  { opacity: 0.4; transform: translate(-3px, 1px)  scale(1.02); color: #ff6b6b; }
+  20%  { opacity: 1;   transform: translate(2px, -2px)  scale(0.98); color: #ff2222; }
+  30%  { opacity: 0.7; transform: translate(-1px, 3px)  scale(1.01); color: #ff8888; }
+  40%  { opacity: 1;   transform: translate(3px, -1px)  scale(1.0);  color: #ff3333; }
+  50%  { opacity: 0.3; transform: translate(-2px, 2px)  scale(1.03); color: #ff5555; }
+  60%  { opacity: 1;   transform: translate(1px, -3px)  scale(0.97); color: #ff1111; }
+  70%  { opacity: 0.8; transform: translate(-3px, -1px) scale(1.02); color: #ff7777; }
+  80%  { opacity: 1;   transform: translate(2px, 2px)   scale(1.0);  color: #ff4444; }
+  90%  { opacity: 0.5; transform: translate(0px, -2px)  scale(0.99); color: #ff9999; }
+  100% { opacity: 1;   transform: translate(0px, 0px)   scale(1.0);  color: #ff4444; }
+}
+
+/* ── Campaign: Notification pop ──────────────────────────── */
+@keyframes notifPop {
+  0%   { transform: translateX(120%); opacity: 0; }
+  8%   { transform: translateX(0%);   opacity: 1; }
+  30%  { transform: translateX(0%);   opacity: 1; }
+  38%  { transform: translateX(120%); opacity: 0; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+
+/* ── Campaign: Infinite scroll feed ─────────────────────── */
+@keyframes scrollBar {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-60%); }
+}
+
+/* ── Campaign: Calm phase transitions ────────────────────── */
+@keyframes calmFadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.7; }
+  50%       { transform: scale(1.12); opacity: 1;   }
+}
+
+@keyframes sunRise {
+  0%   { transform: translateY(30px); opacity: 0; }
+  100% { transform: translateY(0px);  opacity: 1; }
+}
+
+/* ── Campaign: Phase orchestration ───────────────────────── */
+@keyframes showChaotic {
+  0%  { opacity: 1; }
+  40% { opacity: 1; }
+  50% { opacity: 0; }
+  90% { opacity: 0; }
+  100%{ opacity: 1; }
+}
+
+@keyframes showCalm {
+  0%  { opacity: 0; }
+  40% { opacity: 0; }
+  50% { opacity: 1; }
+  90% { opacity: 1; }
+  100%{ opacity: 0; }
+}
