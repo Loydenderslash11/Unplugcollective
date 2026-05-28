@@ -11,6 +11,51 @@
 </head>
 <body class="home-page">
 
+  <!-- Loading screen -->
+  <div id="uc-loader">
+    <div id="uc-loader-lines"></div>
+    <div id="uc-loader-btn-wrap">
+      <button id="uc-enter-btn">ENTER THE UNPLUG COLLECTIVE &gt;&gt;</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var lines = [
+        "Initializing digital wellness program...",
+        "Loading screen time data...",
+        "Analyzing social media patterns...",
+        "Preparing campaign materials...",
+        "Welcome to The Unplug Collective."
+      ];
+      var container = document.getElementById('uc-loader-lines');
+      var btnWrap   = document.getElementById('uc-loader-btn-wrap');
+      var btn       = document.getElementById('uc-enter-btn');
+
+      lines.forEach(function (text, i) {
+        setTimeout(function () {
+          var span = document.createElement('span');
+          span.textContent = '> ' + text;
+          container.appendChild(span);
+        }, 400 + i * 600);
+      });
+
+      setTimeout(function () {
+        var cursor = document.createElement('span');
+        cursor.id = 'uc-cursor';
+        cursor.innerHTML = '> <span class="uc-blink"></span>';
+        container.appendChild(cursor);
+        btnWrap.style.display = 'block';
+      }, 400 + lines.length * 600);
+
+      btn.addEventListener('click', function () {
+        var loader = document.getElementById('uc-loader');
+        loader.style.opacity = '0';
+        setTimeout(function () { loader.style.display = 'none'; }, 600);
+      });
+    })();
+  </script>
+
   <div class="stars-container"></div>
 
   <nav class="navbar" aria-label="Main navigation">
@@ -20,6 +65,7 @@
         <li><a href="#purpose">Our Purpose</a></li>
         <li><a href="#visual-rhetoric">Visual Rhetoric</a></li>
         <li><a href="#multimedia">Multimedia</a></li>
+        <li><a href="#campaign-video">Campaign Video</a></li>
         <li><a href="#rationales">Rationales</a></li>
         <li><a href="#credits">Our Team</a></li>
         <li><a href="rationales.html">Full Rationales</a></li>
@@ -417,6 +463,36 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <section class="campaign-video" id="campaign-video">
+    <div class="container">
+      <span class="section-label fade-in">Campaign Video</span>
+      <h2 class="section-title fade-in">Our Team Speaks Out</h2>
+      <p class="section-intro fade-in">
+        Three members of The Unplug Collective. One message about reclaiming your time.
+      </p>
+
+      <div class="campaign-video-inner fade-in">
+        <div class="video-frame">
+          <video
+            controls
+            src="assets/videos/unplug-campaign.mp4"
+            aria-label="Unplug Collective campaign video"
+          >
+            Your browser does not support the video element. Please try a different browser.
+          </video>
+        </div>
+
+        <div class="video-upload-note">
+          <strong>Team note:</strong> To publish your video, name the file
+          <strong>unplug-campaign.mp4</strong> and place it in
+          <strong>assets/videos/unplug-campaign.mp4</strong> in the repository.
+          The site will show it automatically once the file is there.
+          See <strong>campaign-script.md</strong> for the full filming script.
+        </div>
       </div>
     </div>
   </section>
