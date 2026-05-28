@@ -110,6 +110,14 @@
     }, { passive: true });
   }
 
+  /* ── Scroll background shift (dark gradient parallax) ───── */
+  function initScrollBackground() {
+    window.addEventListener('scroll', function () {
+      var scrolled = window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      document.body.style.backgroundPosition = '0% ' + (scrolled * 80) + '%';
+    }, { passive: true });
+  }
+
   /* ── Init ─────────────────────────────────────────────────── */
   function init() {
     createStars();
@@ -117,6 +125,7 @@
     initSmoothScroll();
     highlightCurrentPage();
     initNavbarScroll();
+    initScrollBackground();
   }
 
   if (document.readyState === 'loading') {

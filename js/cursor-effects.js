@@ -1,8 +1,7 @@
 /* ============================================================
    The Unplug Collective — js/cursor-effects.js
-   Full physics star system with mouse attraction/repulsion,
-   star-to-star collisions, friction, sparkle cursor effects,
-   star color picker and count slider controls.
+   Physics star system: mouse attraction/repulsion,
+   star-to-star collisions, friction, sparkle cursor effects.
    ============================================================ */
 
 (function () {
@@ -200,48 +199,6 @@
     }, 650);
   }
 
-  /* ── Star controls panel ───────────────────────────────── */
-  function buildControlsPanel() {
-    // Check if controls already exist in HTML (added by HTML update)
-    if (document.querySelector('.star-controls')) return;
-
-    var panel = document.createElement('div');
-    panel.classList.add('star-controls');
-    panel.innerHTML =
-      '<label>Star Color' +
-        '<input type="color" id="starColorPicker" value="#f1c40f" />' +
-      '</label>' +
-      '<label style="flex-direction:column;align-items:flex-start;gap:0.3rem;">' +
-        'Stars: <span id="starCountVal">500</span>' +
-        '<input type="range" id="starCountSlider" min="0" max="2500" value="500" />' +
-      '</label>';
-
-    document.body.appendChild(panel);
-    bindControlEvents();
-  }
-
-  function bindControlEvents() {
-    var colorPicker = document.getElementById('starColorPicker');
-    var countSlider = document.getElementById('starCountSlider');
-    var countLabel  = document.getElementById('starCountVal');
-
-    if (colorPicker) {
-      colorPicker.addEventListener('input', function () {
-        starColor = this.value;
-        // Update all existing star colors
-        stars.forEach(function (s) { s.el.style.background = starColor; });
-      });
-    }
-
-    if (countSlider) {
-      countSlider.addEventListener('input', function () {
-        starCount = parseInt(this.value, 10);
-        if (countLabel) countLabel.textContent = starCount;
-        initStars();
-      });
-    }
-  }
-
   /* ── Handle window resize ──────────────────────────────── */
   window.addEventListener('resize', function () {
     // Re-clamp stars that are now off-screen (they will wrap naturally)
@@ -258,8 +215,6 @@
     }
 
     initStars();
-    buildControlsPanel();
-    bindControlEvents();
 
     // Start animation loop
     animFrameId = requestAnimationFrame(function (ts) {
