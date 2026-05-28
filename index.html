@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Unplug Collective — Scroll Less, Live More.</title>
   <meta name="description" content="The Unplug Collective is a digital wellness campaign empowering teenagers to reclaim their time, attention, and mental health from addictive social media platforms." />
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animations.css" />
 </head>
-<body>
+<body class="home-page">
+
+  <div class="stars-container"></div>
 
   <!-- ====================================================
        NAVIGATION
@@ -35,9 +39,9 @@
 
         <div class="hero-eyebrow">The Unplug Collective — Digital Wellness Campaign</div>
 
-        <h1 class="hero-title">The Unplug<br />Collective</h1>
+        <h1 class="hero-title title-animation">The Unplug<br />Collective</h1>
 
-        <p class="hero-slogan">"Scroll Less, Live More."</p>
+        <p class="hero-slogan subtitle-animation">"Scroll Less, Live More."</p>
 
         <p class="hero-subheadline">
           Every swipe is a second surrendered. Every notification a small theft of focus.
@@ -657,53 +661,21 @@
   </footer>
 
   <!-- ====================================================
-       SCROLL ANIMATION SCRIPT
+       STAR CONTROLS PANEL
   ===================================================== -->
-  <script>
-    (function () {
-      'use strict';
+  <div class="star-controls">
+    <label>
+      Star Color
+      <input type="color" id="starColorPicker" value="#f1c40f" />
+    </label>
+    <label style="flex-direction:column;align-items:flex-start;gap:0.3rem;">
+      Stars: <span id="starCountVal">500</span>
+      <input type="range" id="starCountSlider" min="0" max="2500" value="500" />
+    </label>
+  </div>
 
-      // Intersection Observer for fade-in elements
-      const fadeEls = document.querySelectorAll('.fade-in');
-
-      if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(
-          function (entries) {
-            entries.forEach(function (entry) {
-              if (entry.isIntersecting) {
-                entry.target.style.animationPlayState = 'running';
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-        );
-
-        fadeEls.forEach(function (el) {
-          // Pause animation initially; let observer trigger it
-          el.style.animationPlayState = 'paused';
-          observer.observe(el);
-        });
-      } else {
-        // Fallback: just show everything
-        fadeEls.forEach(function (el) {
-          el.classList.add('visible');
-          el.style.opacity = '1';
-        });
-      }
-
-      // Navbar scroll effect
-      var navbar = document.querySelector('.navbar');
-      window.addEventListener('scroll', function () {
-        if (window.scrollY > 60) {
-          navbar.style.background = 'rgba(13, 27, 42, 0.98)';
-        } else {
-          navbar.style.background = 'rgba(13, 27, 42, 0.92)';
-        }
-      }, { passive: true });
-    })();
-  </script>
+  <script src="js/main.js"></script>
+  <script src="js/cursor-effects.js"></script>
 
 </body>
 </html>

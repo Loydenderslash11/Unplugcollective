@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Full Rationales — The Unplug Collective</title>
   <meta name="description" content="Full written rationales for every element of The Unplug Collective campaign, analyzing rhetorical strategies including pathos, logos, ethos, kairos, and more." />
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animations.css" />
 </head>
 <body class="rationales-page">
+
+  <div class="stars-container"></div>
 
   <!-- ====================================================
        NAVIGATION
@@ -392,40 +396,22 @@
     </div>
   </footer>
 
-  <!-- Scroll animation script (same as index) -->
-  <script>
-    (function () {
-      'use strict';
-      var fadeEls = document.querySelectorAll('.fade-in');
-      if ('IntersectionObserver' in window) {
-        var observer = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (entry.isIntersecting) {
-              entry.target.style.animationPlayState = 'running';
-              entry.target.classList.add('visible');
-              observer.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-        fadeEls.forEach(function (el) {
-          el.style.animationPlayState = 'paused';
-          observer.observe(el);
-        });
-      } else {
-        fadeEls.forEach(function (el) {
-          el.classList.add('visible');
-          el.style.opacity = '1';
-        });
-      }
+  <!-- ====================================================
+       STAR CONTROLS PANEL
+  ===================================================== -->
+  <div class="star-controls">
+    <label>
+      Star Color
+      <input type="color" id="starColorPicker" value="#f1c40f" />
+    </label>
+    <label style="flex-direction:column;align-items:flex-start;gap:0.3rem;">
+      Stars: <span id="starCountVal">500</span>
+      <input type="range" id="starCountSlider" min="0" max="2500" value="500" />
+    </label>
+  </div>
 
-      var navbar = document.querySelector('.navbar');
-      window.addEventListener('scroll', function () {
-        navbar.style.background = window.scrollY > 60
-          ? 'rgba(13, 27, 42, 0.98)'
-          : 'rgba(13, 27, 42, 0.92)';
-      }, { passive: true });
-    })();
-  </script>
+  <script src="js/main.js"></script>
+  <script src="js/cursor-effects.js"></script>
 
 </body>
 </html>
