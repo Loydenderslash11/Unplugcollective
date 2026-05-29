@@ -32,7 +32,7 @@ The website will display it automatically once the file is there.
 
 ---
 
-### KIYANOOSH — Web Developer, Team Member
+### KIYANOOSH — Visual Rhetoric and Website Development
 
 *(Opens the video, speaks with confidence)*
 
@@ -50,7 +50,7 @@ You deserve a mind that belongs to you. Join us.
 
 ---
 
-### SEAN — Team Member
+### SEAN — Research and Citations
 
 *(Warm, community-focused)*
 
@@ -68,7 +68,7 @@ Scroll less. Live more.
 
 ---
 
-### DANIEL — Team Member
+### DANIEL — Rhetorical Analysis
 
 *(Energetic, forward-looking)*
 
