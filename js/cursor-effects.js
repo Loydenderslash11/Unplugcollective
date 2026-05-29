@@ -1,232 +1,163 @@
-/* ============================================================
-   The Unplug Collective — js/cursor-effects.js
-   Physics star system: mouse attraction/repulsion,
-   star-to-star collisions, friction, sparkle cursor effects.
-   ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+    var starColor = '#f1c40f';
+    var starCount = 500;
+    var starsContainer = document.querySelector('.stars-container');
+    var stars = [];
 
-(function () {
-  'use strict';
-
-  /* ── State ─────────────────────────────────────────────── */
-  var stars        = [];
-  var mouse        = { x: -9999, y: -9999 };
-  var starColor    = '#f1c40f';
-  var starCount    = 500;
-  var container    = null;
-  var animFrameId  = null;
-  var lastTime     = 0;
-
-  /* ── Config ────────────────────────────────────────────── */
-  var CONFIG = {
-    minSize:         1,
-    maxSize:         4,
-    mouseRadius:     120,
-    attractForce:    0.04,
-    repelForce:      0.12,
-    friction:        0.92,
-    collisionRadius: 6,
-    maxSpeed:        4
-  };
-
-  /* ── Star factory ──────────────────────────────────────── */
-  function createStar() {
-    var size = Math.random() * (CONFIG.maxSize - CONFIG.minSize) + CONFIG.minSize;
-    var el   = document.createElement('div');
-    el.classList.add('star');
-    el.style.width   = size + 'px';
-    el.style.height  = size + 'px';
-    el.style.background = starColor;
-    el.style.position   = 'absolute';
-    el.style.borderRadius = '50%';
-    el.style.pointerEvents = 'none';
-
-    var x = Math.random() * window.innerWidth;
-    var y = Math.random() * window.innerHeight;
-
-    el.style.left = x + 'px';
-    el.style.top  = y + 'px';
-
-    if (container) container.appendChild(el);
-
-    return {
-      el:   el,
-      x:    x,
-      y:    y,
-      vx:   (Math.random() - 0.5) * 0.6,
-      vy:   (Math.random() - 0.5) * 0.6,
-      size: size,
-      baseOpacity: Math.random() * 0.6 + 0.4
+    var physics = {
+        mouseInfluence:  20,
+        mouseRadius:     150,
+        friction:        0.3,
+        repulsionRadius: 60,
+        repulsionForce:  5
     };
-  }
 
-  /* ── Initialize / reinitialize star field ──────────────── */
-  function initStars() {
-    // Remove existing stars
-    stars.forEach(function (s) {
-      if (s.el && s.el.parentNode) s.el.parentNode.removeChild(s.el);
-    });
-    stars = [];
+    var mouseX = null, mouseY = null;
+    var mouseActive = false;
 
-    container = document.querySelector('.stars-container');
-    if (!container) return;
-
-    // Clear any basic stars added by main.js
-    container.innerHTML = '';
-
-    for (var i = 0; i < starCount; i++) {
-      stars.push(createStar());
-    }
-  }
-
-  /* ── Physics animation loop ────────────────────────────── */
-  function animate(timestamp) {
-    animFrameId = requestAnimationFrame(animate);
-
-    var dt = timestamp - lastTime;
-    lastTime = timestamp;
-    if (dt > 100) dt = 100; // cap large gaps (tab was hidden etc.)
-
-    var W = window.innerWidth;
-    var H = window.innerHeight;
-
-    for (var i = 0; i < stars.length; i++) {
-      var s = stars[i];
-
-      /* Mouse influence */
-      var dx = mouse.x - s.x;
-      var dy = mouse.y - s.y;
-      var dist = Math.sqrt(dx * dx + dy * dy) || 1;
-
-      if (dist < CONFIG.mouseRadius) {
-        var factor = (CONFIG.mouseRadius - dist) / CONFIG.mouseRadius;
-        /* Left button held → attract; otherwise → repel */
-        if (mouseDown) {
-          s.vx += (dx / dist) * factor * CONFIG.attractForce;
-          s.vy += (dy / dist) * factor * CONFIG.attractForce;
-        } else {
-          s.vx -= (dx / dist) * factor * CONFIG.repelForce;
-          s.vy -= (dy / dist) * factor * CONFIG.repelForce;
+    /* ── Star creation ── */
+    function initStars() {
+        starsContainer.innerHTML = '';
+        stars = [];
+        for (var i = 0; i < starCount; i++) {
+            createStar();
         }
-      }
-
-      /* Star-to-star collision (only check nearby — sample 20 random) */
-      var checks = Math.min(20, stars.length);
-      for (var j = 0; j < checks; j++) {
-        var k = Math.floor(Math.random() * stars.length);
-        if (k === i) continue;
-        var other = stars[k];
-        var cdx   = s.x - other.x;
-        var cdy   = s.y - other.y;
-        var cdist = Math.sqrt(cdx * cdx + cdy * cdy) || 1;
-        var minD  = (s.size + other.size) * 0.5 + CONFIG.collisionRadius;
-        if (cdist < minD) {
-          var overlap = minD - cdist;
-          var nx = cdx / cdist;
-          var ny = cdy / cdist;
-          // Simple elastic-ish push
-          s.vx     += nx * overlap * 0.05;
-          s.vy     += ny * overlap * 0.05;
-          other.vx -= nx * overlap * 0.05;
-          other.vy -= ny * overlap * 0.05;
-        }
-      }
-
-      /* Friction */
-      s.vx *= CONFIG.friction;
-      s.vy *= CONFIG.friction;
-
-      /* Speed limit */
-      var speed = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
-      if (speed > CONFIG.maxSpeed) {
-        s.vx = (s.vx / speed) * CONFIG.maxSpeed;
-        s.vy = (s.vy / speed) * CONFIG.maxSpeed;
-      }
-
-      /* Move */
-      s.x += s.vx;
-      s.y += s.vy;
-
-      /* Wrap around edges */
-      if (s.x < 0)  s.x = W;
-      if (s.x > W)  s.x = 0;
-      if (s.y < 0)  s.y = H;
-      if (s.y > H)  s.y = 0;
-
-      /* Apply to DOM */
-      s.el.style.left = s.x + 'px';
-      s.el.style.top  = s.y + 'px';
-    }
-  }
-
-  /* ── Mouse tracking ────────────────────────────────────── */
-  var mouseDown = false;
-
-  document.addEventListener('mousemove', function (e) {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-    spawnSparkle(e.clientX, e.clientY);
-  }, { passive: true });
-
-  document.addEventListener('mousedown', function () { mouseDown = true;  });
-  document.addEventListener('mouseup',   function () { mouseDown = false; });
-
-  /* ── Cursor sparkles ───────────────────────────────────── */
-  var lastSparkle = 0;
-  var SPARKLE_THROTTLE = 40; // ms between sparkles
-
-  function spawnSparkle(x, y) {
-    var now = Date.now();
-    if (now - lastSparkle < SPARKLE_THROTTLE) return;
-    lastSparkle = now;
-
-    var sparkle = document.createElement('div');
-    sparkle.classList.add('sparkle');
-    sparkle.style.left = x + 'px';
-    sparkle.style.top  = y + 'px';
-    sparkle.style.background = starColor;
-    sparkle.style.boxShadow  = '0 0 6px ' + starColor + ', 0 0 12px ' + starColor + '80';
-
-    // Randomize size slightly
-    var sz = Math.random() * 6 + 4;
-    sparkle.style.width  = sz + 'px';
-    sparkle.style.height = sz + 'px';
-
-    document.body.appendChild(sparkle);
-
-    // Remove after animation completes
-    setTimeout(function () {
-      if (sparkle.parentNode) sparkle.parentNode.removeChild(sparkle);
-    }, 650);
-  }
-
-  /* ── Handle window resize ──────────────────────────────── */
-  window.addEventListener('resize', function () {
-    // Re-clamp stars that are now off-screen (they will wrap naturally)
-  }, { passive: true });
-
-  /* ── Bootstrap ─────────────────────────────────────────── */
-  function boot() {
-    container = document.querySelector('.stars-container');
-    if (!container) {
-      // Create container if missing
-      container = document.createElement('div');
-      container.classList.add('stars-container');
-      document.body.insertBefore(container, document.body.firstChild);
     }
 
-    initStars();
+    function createStar() {
+        var star = document.createElement('div');
+        star.className = 'star';
 
-    // Start animation loop
-    animFrameId = requestAnimationFrame(function (ts) {
-      lastTime = ts;
-      animate(ts);
+        var size = Math.random() * 2 + 1;
+        star.style.width  = size + 'px';
+        star.style.height = size + 'px';
+
+        var x = Math.random() * 100;
+        var y = Math.random() * 100;
+        star.style.left = x + '%';
+        star.style.top  = y + '%';
+        star.style.backgroundColor = starColor;
+
+        starsContainer.appendChild(star);
+
+        stars.push({
+            element: star,
+            x:    x * window.innerWidth  / 100,
+            y:    y * window.innerHeight / 100,
+            vx:   0,
+            vy:   0,
+            size: size
+        });
+    }
+
+    /* ── Mouse tracking ── */
+    document.addEventListener('mousemove', function (e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        mouseActive = true;
+        spawnSparkle(e.clientX, e.clientY);
     });
-  }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
-  }
+    document.addEventListener('mouseleave', function () {
+        mouseActive = false;
+    });
 
-})();
+    /* ── Sparkle cursor ── */
+    var lastSparkle = 0;
+
+    function spawnSparkle(x, y) {
+        var now = Date.now();
+        if (now - lastSparkle < 40) return;
+        lastSparkle = now;
+
+        var sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = x + 'px';
+        sparkle.style.top  = y + 'px';
+        sparkle.style.backgroundColor = starColor;
+        document.body.appendChild(sparkle);
+
+        setTimeout(function () {
+            if (sparkle.parentNode) sparkle.parentNode.removeChild(sparkle);
+        }, 1000);
+    }
+
+    /* ── Animation loop ── */
+    function animate() {
+        for (var i = 0; i < stars.length; i++) {
+            var star = stars[i];
+            var ax = 0, ay = 0;
+
+            if (mouseActive && mouseX !== null) {
+                var dx = mouseX - star.x;
+                var dy = mouseY - star.y;
+                var distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < physics.mouseRadius) {
+                    var angle = Math.atan2(dy, dx);
+                    var force = physics.mouseInfluence * (1 - distance / physics.mouseRadius);
+
+                    ax += Math.cos(angle + Math.PI / 2) * force * 0.5;
+                    ay += Math.sin(angle + Math.PI / 2) * force * 0.5;
+                    ax += dx * 0.01;
+                    ay += dy * 0.01;
+
+                    if (distance < physics.repulsionRadius) {
+                        var repulsion = physics.repulsionForce * (1 - distance / physics.repulsionRadius);
+                        ax -= dx * repulsion * 0.1;
+                        ay -= dy * repulsion * 0.1;
+                    }
+                }
+            }
+
+            for (var j = 0; j < stars.length; j++) {
+                if (i === j) continue;
+                var other = stars[j];
+                var cdx  = other.x - star.x;
+                var cdy  = other.y - star.y;
+                var dist = Math.sqrt(cdx * cdx + cdy * cdy);
+                var minD = (star.size + other.size) * 2;
+
+                if (dist < minD) {
+                    var cf = physics.repulsionForce * (1 - dist / minD);
+                    ax -= cdx * cf * 0.05;
+                    ay -= cdy * cf * 0.05;
+                }
+            }
+
+            star.vx = star.vx * (1 - physics.friction) + ax;
+            star.vy = star.vy * (1 - physics.friction) + ay;
+            star.x += star.vx;
+            star.y += star.vy;
+
+            if (star.x < 0 || star.x > window.innerWidth) {
+                star.x = Math.max(0, Math.min(window.innerWidth, star.x));
+                star.vx *= -0.5;
+            }
+            if (star.y < 0 || star.y > window.innerHeight) {
+                star.y = Math.max(0, Math.min(window.innerHeight, star.y));
+                star.vy *= -0.5;
+            }
+
+            star.element.style.left = star.x + 'px';
+            star.element.style.top  = star.y + 'px';
+
+            var speed = Math.sqrt(star.vx * star.vx + star.vy * star.vy);
+            star.element.style.opacity = speed > 2 ? (0.7 + 0.3 * Math.random()) : 1;
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', function () {
+        for (var i = 0; i < stars.length; i++) {
+            stars[i].x = parseFloat(stars[i].element.style.left);
+            stars[i].y = parseFloat(stars[i].element.style.top);
+        }
+    });
+
+    if (starsContainer) {
+        initStars();
+        animate();
+    }
+});
