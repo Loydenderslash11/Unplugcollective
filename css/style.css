@@ -1489,6 +1489,19 @@ footer {
   background: #060812;
 }
 
+.video-frame-shorts {
+  max-width: 340px;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+}
+
+.video-frame-shorts iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: none;
+}
+
 .video-upload-note {
   max-width: 820px;
   width: 100%;
